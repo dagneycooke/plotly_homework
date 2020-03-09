@@ -30,9 +30,7 @@ function init() {
 
     initialBarChart(initialSampleValues, initialOtuIds, initialOtuLabels); // make bar chart for first sample
     initialBubbleChart(initialOtuIds, initialSampleValues, initialOtuLabels); // make bubble chart for first sample
-    initialDemoInfo(initialMetaData);
-
-    
+    initialDemoInfo(initialMetaData); // fill in demo info with metadata for first sample
 
   })  
 
@@ -78,6 +76,7 @@ function updateBarChart(x, y, labels) {
   Plotly.restyle("bar", "text", [labels.slice(0,10).reverse()]);
 };
 
+// create bubble chart for initial data
 function initialBubbleChart(x, y, labels) {
 
   var data = [{
@@ -95,6 +94,7 @@ function initialBubbleChart(x, y, labels) {
 
 };
 
+// update bubble chart with new data and info
 function updateBubbleChart(x, y, labels) {
 
   Plotly.restyle("bubble","x",[x]);
@@ -105,17 +105,19 @@ function updateBubbleChart(x, y, labels) {
 
 };
 
+// create demo info from initial metadata
 function initialDemoInfo(initialMetaData){
 
-  var metadataKeys = Object.keys(initialMetaData);
-  var metadataValues = Object.values(initialMetaData);
-  console.log(metadataKeys);
-  console.log(metadataValues);
+  var metadataKeys = Object.keys(initialMetaData); // get all keys
+  var metadataValues = Object.values(initialMetaData); // get all values
+  // console.log(metadataKeys);
+  // console.log(metadataValues);
 
-  var panel = d3.select ("#sample-metadata");
+  var panel = d3.select ("#sample-metadata"); // get div
 
-  console.log(metadataKeys.length)
+  //console.log(metadataKeys.length)
 
+  // loop through all keys and values in paragraph
   for (var i = 0; i < metadataKeys.length; i ++) {
     panel.append("p").attr("values", metadataKeys[i]).text(metadataKeys[i] + " : " + metadataValues[i]);
     console.log("test loop");
@@ -123,33 +125,27 @@ function initialDemoInfo(initialMetaData){
 
 };
 
-function updateDemoInfo() {
+// update demo info for new selected sample
+function updateDemoInfo(newMetaData) {
+
+  var metadataKeys = Object.keys(newMetaData); // get all keys
+  var metadataValues = Object.values(newMetaData); // get all values
+  // console.log(metadataKeys);
+  // console.log(metadataValues);
+
+  var panel = d3.select ("#sample-metadata"); // get div
+
+  panel.selectAll("p").remove(); // remove all existing paragraphs from div
+
+  // console.log(metadataKeys.length)
+
+  // loop through all keys and values in paragraph
+  for (var i = 0; i < metadataKeys.length; i ++) {
+    panel.append("p").attr("values", metadataKeys[i]).text(metadataKeys[i] + " : " + metadataValues[i]);
+    console.log("test loop");
+  };
 
 };
-
-// // The new student and grade to add to the table
-// var newGrade = ["Wash", 79];
-
-// // Use D3 to select the table
-// var table = d3.select("table");
-
-// // Use d3 to create a bootstrap striped table
-// // http://getbootstrap.com/docs/3.3/css/#tables-striped
-// table.attr("class", "table table-striped");
-
-// // Use D3 to select the table body
-// var tbody = d3.select("tbody");
-
-// // Append one table row `tr` to the table body
-// var row = tbody.append("tr");
-
-// // Append one cell for the student name
-// row.append("td").text(newGrade[0]);
-
-// // Append one cell for the student grade
-// row.append("td").text(newGrade[1]);
-
-
 
 // get new information based on what is selected on the dropdown menu
 function optionChanged(new_option) {
@@ -177,15 +173,17 @@ function optionChanged(new_option) {
     // console.log('OTU Labels')
     // console.log(initialOtuLabels);
 
+    var metadata = data.metadata; // get all meadata
+    var newMetaData = metadata[new_option]; // get specific metadata
+
     // update the bar chart based on new information
     updateBarChart(newSampleValues, newOtuIds, newOtuLabels);
     updateBubbleChart(newOtuIds, newSampleValues, newOtuLabels);
-
+    updateDemoInfo(newMetaData)
 
   });
 
 };
-
 
 // initialize page!  don't forget this :)
 init();
