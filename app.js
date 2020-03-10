@@ -24,6 +24,7 @@ function init() {
 
     var metadata = data.metadata; // get metadata of all samples
     var initialMetaData = metadata[0]; // get metadata for first sample
+    var initialwfreq = initialMetaData.wfreq;
     //console.log(initialMetaData);
 
     dropDownMenu(names); // make drop down menu
@@ -31,12 +32,15 @@ function init() {
     initialBarChart(initialSampleValues, initialOtuIds, initialOtuLabels); // make bar chart for first sample
     initialBubbleChart(initialOtuIds, initialSampleValues, initialOtuLabels); // make bubble chart for first sample
     initialDemoInfo(initialMetaData); // fill in demo info with metadata for first sample
+    initialGauge(initialwfreq);
+
 
   })  
 
 };
 
 // create dropdown menu from list of names
+// shouts to heain for helping with this function
 function dropDownMenu(names) {
 
   var dropDown = d3.select("#selDataset"); // get dropdown id
@@ -60,7 +64,12 @@ function initialBarChart(x, y, labels) {
     text: labels.slice(0,10).reverse() // otu labels
   }];
 
-  Plotly.newPlot("bar", barData);
+  var layout = {
+    title: "Top 10 OTUs",
+    xaxis: {title: "Count"},
+    yaxis: {title: "OTU ID"}
+  }
+  Plotly.newPlot("bar", barData, layout);
 
 };
 
@@ -90,7 +99,13 @@ function initialBubbleChart(x, y, labels) {
     }
   }];
 
-  Plotly.newPlot("bubble",data);
+  var layout = {
+    title: "OTU Frequency",
+    xaxis: {title: "OTU ID"},
+    yaxis: {title: "Count"}
+  };
+
+  Plotly.newPlot("bubble",data, layout);
 
 };
 
@@ -147,6 +162,63 @@ function updateDemoInfo(newMetaData) {
 
 };
 
+function initialGauge(wfreq) {
+
+  var data = [
+    {
+      //domain: { x: [0, 1], y: [0, 1] },
+      value: wfreq,
+      title: { text: "Belly Button Washing Frequency" },
+      //text: ["0-1","1-2","2-3","3-4","4-5","5-6","6-7","7-8","8-9","9-10"],
+      labels: ["0-1","1-2","2-3","3-4","4-5","5-6","6-7","7-8","8-9","9-10"],
+      type: "indicator",
+      mode: "gauge+number",
+      textinfo: "text",
+      textposition: "inside",
+      marker: {
+        colors: ['','','','','','','','','','white'],
+        labels: ['0-1','1-2','2-3','3-4','4-5','5-6','6-7','7-8','8-9'],
+        hoverinfo: 'label'
+      },
+      gauge: { 
+        axis: {range: [0,9]},
+        bar: {color: "green"},
+        steps: [
+          { range: [0, 1], color: "lightgray" },
+          { range: [1, 2], color: "darkgrey" },
+          { range: [2, 3], color: "lightgray" },
+          { range: [3, 4], color: "darkgrey" },
+          { range: [4, 5], color: "lightgray" },
+          { range: [5, 6], color: "darkgrey" },
+          { range: [6, 7], color: "lightgray" },
+          { range: [7, 8], color: "darkgrey" },
+          { range: [8, 9], color: "lightgray" },
+          { range: [9, 10], color: "darkgrey" },
+        ],
+        shapes: [{
+          type: 'line',
+          x0: 0.5,
+          y0: 0.5,
+          x1: 0.6,
+          y1: 0.6,
+          line: {
+            color: 'black',
+            width: 3
+          }
+        }],
+      }
+    }
+  ];
+  
+  var layout = { width: 600, height: 500, margin: { t: 0, b: 0 } };
+  Plotly.newPlot('gauge', data, layout);
+};
+
+function updateGauge(wfreq) {
+
+  Plotly.restyle("gauge","value",[wfreq]);
+};
+
 // get new information based on what is selected on the dropdown menu
 function optionChanged(new_option) {
   //var dropdownMenu = d3.select("#selDataset");
@@ -175,11 +247,13 @@ function optionChanged(new_option) {
 
     var metadata = data.metadata; // get all meadata
     var newMetaData = metadata[new_option]; // get specific metadata
+    var newwfreq = newMetaData.wfreq;
 
     // update the bar chart based on new information
     updateBarChart(newSampleValues, newOtuIds, newOtuLabels);
     updateBubbleChart(newOtuIds, newSampleValues, newOtuLabels);
-    updateDemoInfo(newMetaData)
+    updateDemoInfo(newMetaData);
+    updateGauge(newwfreq);
 
   });
 
