@@ -32,7 +32,7 @@ function init() {
     initialBarChart(initialSampleValues, initialOtuIds, initialOtuLabels); // make bar chart for first sample
     initialBubbleChart(initialOtuIds, initialSampleValues, initialOtuLabels); // make bubble chart for first sample
     initialDemoInfo(initialMetaData); // fill in demo info with metadata for first sample
-    initialGauge(initialwfreq);
+    initialGauge(initialwfreq); // initial gauge chart
 
 
   })  
@@ -162,6 +162,7 @@ function updateDemoInfo(newMetaData) {
 
 };
 
+// default gauge chart
 function initialGauge(wfreq) {
 
   var data = [
@@ -211,9 +212,11 @@ function initialGauge(wfreq) {
   ];
   
   var layout = { width: 600, height: 500, margin: { t: 0, b: 0 } };
-  Plotly.newPlot('gauge', data, layout);
+
+  Plotly.newPlot('gauge', data, layout); // make plot
 };
 
+// update gauge chart
 function updateGauge(wfreq) {
 
   Plotly.restyle("gauge","value",[wfreq]);
@@ -247,9 +250,9 @@ function optionChanged(new_option) {
 
     var metadata = data.metadata; // get all meadata
     var newMetaData = metadata[new_option]; // get specific metadata
-    var newwfreq = newMetaData.wfreq;
+    var newwfreq = newMetaData.wfreq; // get specific wash frequency
 
-    // update the bar chart based on new information
+    // update charts based on new info
     updateBarChart(newSampleValues, newOtuIds, newOtuLabels);
     updateBubbleChart(newOtuIds, newSampleValues, newOtuLabels);
     updateDemoInfo(newMetaData);
